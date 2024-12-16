@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 entity ALU is
     PORT(
@@ -13,25 +14,97 @@ entity ALU is
     );
 end ALU;
 
+-- Result = R1	000
+-- SetC	        001
+-- Not	        010
+-- Add	        011
+-- Sub	        100
+-- And	        101
+-- INC      	110
+
+-- Z<0>:=CCR<0> 
+-- N<0>:=CCR<1> 
+-- C<0>:=CCR<2> 
+
+-- There is a room for optimization
 architecture Behavioral of ALU is
-    component ADDER is 
-        PORT(
-            R1 : in STD_LOGIC_VECTOR (15 downto 0);
-            R2 : in STD_LOGIC_VECTOR (15 downto 0);
-            c : in STD_LOGIC;
-
-            result : out STD_LOGIC_VECTOR (15 downto 0);
-            newCCR : out STD_LOGIC_VECTOR (2 downto 0)
-        );
-    end component;
-
-    signal invR2 : STD_LOGIC_VECTOR (15 downto 0);
     
     begin
-    
-    -- In case of SUB operation
-    invR2 <= not R2 when aluControl(2) = '1' else R2;
+    process(R1, R2, aluControl) 
+        variable temp_result : std_logic_vector(16 downto 0) := (others => '0');
+    begin case aluControl is
+        when "000" => 
+            temp_result(15 downto 0) := R1; -- It doesn't matter
+            newCCR <= oldCCR; --
+        when "001" => 
+            temp_result(15 downto 0) := R1;  -- It doesn't matter
+            newCCR(2) <= '1';
+            newCCR(1 downto 0) <= oldCCR(1 downto 0); -- 
+        when "010" =>    -- Not
+            temp_result(15 downto 0) := not R1;  
+            
+            if temp_result(15 downto 0) = ("0000000000000000") then
+                newCCR(0) <= '1';
+            else 
+                newCCR(0) <= '0';
+            end if;
 
-    uut1 : ADDER PORT MAP(R1 => R1, R2 => invR2, c => aluControl(2), result => result, newCCR => newCCR);
+            newCCR(1) <= temp_result(15);
+            newCCR(2) <= '0';
+
+        when "011" =>  -- Add
+            temp_result := std_logic_vector(unsigned('0' & R1) + unsigned('0' & R2));   
+                
+            if temp_result(15 downto 0) = ("0000000000000000") then
+                newCCR(0) <= '1';
+            else 
+                newCCR(0) <= '0';
+            end if;
+
+            newCCR(1) <= temp_result(15);
+            newCCR(2) <= temp_result(16);
+
+        when "100" =>  -- Sub
+            temp_result := std_logic_vector(unsigned('0' & R1) - unsigned('0' & R2));   
+                    
+            if temp_result(15 downto 0) = ("0000000000000000") then
+                newCCR(0) <= '1';
+            else 
+                newCCR(0) <= '0';
+            end if;
+
+            newCCR(1) <= temp_result(15);
+            newCCR(2) <= temp_result(16);
+
+        when "101" =>  -- And
+            temp_result(15 downto 0) := R1 and R2;
+
+            if temp_result(15 downto 0) = ("0000000000000000") then
+                newCCR(0) <= '1';
+            else 
+                newCCR(0) <= '0';
+            end if;
+
+            newCCR(1) <= temp_result(15);
+            newCCR(2) <= '0';
+
+        when "110" =>    -- Inc -- We Should Change it to make it normal add op, but R2 is 1!!!!!!!
+            temp_result := std_logic_vector(unsigned('0' & R1) + ("00000000000000001"));   -- needs testing
+                    
+            if temp_result(15 downto 0) = ("0000000000000000") then
+                newCCR(0) <= '1';
+            else 
+                newCCR(0) <= '0';
+            end if;
+
+            newCCR(1) <= temp_result(15);
+            newCCR(2) <= temp_result(16);
+
+        when others => temp_result := (others => '0'); end case;
+        
+        result <= temp_result(15 downto 0);
+    end process;
+
+
 
 end Behavioral;
