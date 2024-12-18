@@ -1,0 +1,66 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+entity memory_stage is
+    port(
+        push,pop,load,store,call,ret,INT,RTI,clk,rst: in std_logic;
+        memory_read,memory_write: in std_logic;
+        updated_pc: in std_logic_vector(15 downto 0);
+        -- data_in: in std_logic_vector(15 downto 0);  
+        Rs1: in std_logic_vector(15 downto 0);
+        address: in std_logic_vector(11 downto 0);
+        flags_in_signal: in std_logic;
+        flags_out_signal: in std_logic;
+        flags_in: in std_logic_vector(2 downto 0);
+        flags_out: out std_logic_vector(2 downto 0);
+        data_out: out std_logic_vector(15 downto 0);
+        empty_stack: out std_logic;
+    );
+end entity;
+
+architecture arch of memory_stage is
+    signal sp: std_logic_vector(15 downto 0) := std_logic_vector(to_unsigned(2**12 - 1,16));
+    type memory_type is array(0 to 2**12-1) of std_logic_vector(15 downto 0);
+    signal data_memory: memory_type;
+    -- signal final_address: std_logic_vector(11 downto 0);
+begin 
+    process(clk,rst)
+        variable final_data: std_logic_vector(15 downto 0);
+    begin 
+        if(rst = '1') then
+            data_out <= (others => '0');
+            data_memory <= (others => (others => '0'));
+            sp<=std_logic_vector(to_unsigned(2**12 - 1,16));
+        elsif (rising_edge(clk)) then
+            if(memory_write='1') then
+                if(store='1') then
+                    final_data := Rs1;
+                else
+                    final_data := updated_pc;
+                end if;
+                data_memory(to_integer(unsigned(final_address))) <= final_data;
+            end if;
+    end process;
+    
+    process(pop,load,ret,sp,RTI,address,memory_read,flags_in_signal,flags)
+        variable final_address: std_logic_vector(11 downto 0);
+    begin
+        if(memory_read='1') then
+            if(pop='1' and sp=std_logic_vector(to_unsigned(2**12 - 1,16))) then
+                data_out <= (others => '0');
+                empty_stack <= '1';
+            else 
+                empty_stack <= '0';
+                if(load='1') then
+                    final_address := address;
+                else
+                    final_address := sp(11 downto 0);
+                end if;
+                data_out <= data_memory(to_integer(unsigned(final_address)));
+            end if;
+
+
+        end if;
+
+    end process;
+end arch;
