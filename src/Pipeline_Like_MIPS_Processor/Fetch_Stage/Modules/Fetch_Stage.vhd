@@ -22,7 +22,7 @@ entity Fetch_Stage is
     invalid_address : in std_logic;
     int : in std_logic;     -- interrupt signal
     updated_pc : in std_logic_vector(15 downto 0);
-    flush : in std_logic;
+    -- flush : in std_logic;
 
     -- inputs
     Rsrc1 : in std_logic_vector(15 downto 0);
