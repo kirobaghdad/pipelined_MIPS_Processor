@@ -62,7 +62,7 @@ entity Execution_Stage is
   ) ;
 end Execution_Stage;
 
-
+-- CCR -> How to get it??
 architecture behavioral of Execution_Stage is
   signal OP1 : std_logic_vector(15 downto 0);
   signal temp_result : std_logic_vector(15 downto 0);
@@ -71,6 +71,7 @@ begin
 
     uut2: entity work.Ex_MEM_Reg PORT MAP(clk => clk, rst => rst, reg_write => reg_write, Rdst => Rdst, updated_PC => updated_PC, mem_read => mem_read, mem_write => mem_write, mem_to_reg => mem_to_reg, stack => stack, call => call, pop => pop, ldm => ldm, ret => ret, rti => rti, store => store, int => int, enable => enable, result => temp_result, reg_write_r => e_reg_write, Rdst_r => e_Rdst, updated_PC_r => e_updated_PC, result_r => e_result, mem_read_r => e_mem_read, mem_write_r => e_mem_write, mem_to_reg_r => e_mem_to_reg, stack_r => e_stack, call_r=> e_call, pop_r => e_pop, ldm_r => e_ldm, ret_r => e_ret, rti_r => e_rti, store_r => e_store, int_r => e_int, enable_r => e_enable);
 
+    -- IMMD in R2
     uut3: entity work.R1_Selector PORT MAP(IMMD_Control => IMMD_Control, in_control => in_control, IMMD => IMMD, user_input => user_input, R1 => R1, OP1 => OP1);
     
     

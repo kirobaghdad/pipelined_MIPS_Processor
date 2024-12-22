@@ -28,7 +28,7 @@ end ALU;
 
 -- There is a room for optimization
 architecture Behavioral of ALU is
-    
+    -- itegrate
     begin
     process(OP1, OP2, alu_control) 
         variable temp_result : std_logic_vector(16 downto 0) := (others => '0');
@@ -71,7 +71,7 @@ architecture Behavioral of ALU is
                 new_CCR(0) <= '1';
             else 
                 new_CCR(0) <= '0';
-            end if;
+            end if;x
 
             new_CCR(1) <= temp_result(15);
             new_CCR(2) <= temp_result(16);
