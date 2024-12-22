@@ -22,7 +22,7 @@ begin
   begin
     if rising_edge(clk) then
       if rst = '1' then
-        Q_reg <= (others => 'X');
+        Q_reg <= (others => '0');
       else
         Q_reg <= D;
       end if;

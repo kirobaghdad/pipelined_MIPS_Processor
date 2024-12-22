@@ -2,9 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity memory_stage is
+entity memory_stage_without_buffer is
     port(
-        push, pop, load, store, call, ret, INT, RTI, clk, rst: in std_logic;
+        push, pop, load, store, call, ret, INT, RTI, clk, rst,wb: in std_logic;
         memory_read, memory_write: in std_logic;
         updated_pc: in std_logic_vector(15 downto 0);
         Rs1: in std_logic_vector(15 downto 0);
@@ -14,11 +14,11 @@ entity memory_stage is
         flags_in: in std_logic_vector(2 downto 0);
         flags_out: out std_logic_vector(2 downto 0);
         data_out: out std_logic_vector(15 downto 0);
-        empty_stack: out std_logic
+        empty_stack,wb_out: out std_logic
     );
 end entity;
 
-architecture arch of memory_stage is
+architecture arch of memory_stage_without_buffer is
     signal sp: unsigned(15 downto 0) := to_unsigned(2**12 - 1, 16);
     type memory_type is array(0 to 2**12-1) of std_logic_vector(15 downto 0);
     signal data_memory: memory_type;
@@ -27,6 +27,7 @@ begin
         variable final_data: std_logic_vector(15 downto 0);
         variable final_address: unsigned(11 downto 0);
     begin 
+        wb_out <= wb;
         empty_stack <= '0';
         data_out <= (others => '0');
         flags_out <= (others => '0');
@@ -34,7 +35,7 @@ begin
             data_out <= (others => '0');
             data_memory <= (others => (others => '0'));
             sp <= to_unsigned(2**12 - 1, 16);
-        elsif (rising_edge(clk)) then
+        elsif (falling_edge(clk)) then
             if (memory_write = '1') then
                 if (store = '1') then
                     final_address := unsigned(address);
@@ -59,6 +60,7 @@ begin
                 if (pop = '1' and sp = to_unsigned(2**12 - 1, 16)) then
                     data_out <= (others => '0');
                     empty_stack <= '1';
+                    wb_out <= '0';
                 else 
                     empty_stack <= '0';
                     if (load = '1') then
@@ -74,3 +76,4 @@ begin
         end if;
     end process;
 end arch;
+
