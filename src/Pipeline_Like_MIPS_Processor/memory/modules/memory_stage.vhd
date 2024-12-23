@@ -9,7 +9,7 @@ entity memory_stage is
     memory_read, memory_write: in std_logic;
     updated_pc: in std_logic_vector(15 downto 0);
     Rs1: in std_logic_vector(15 downto 0);
-    address: in std_logic_vector(11 downto 0);
+    -- address: in std_logic_vector(11 downto 0);
     flags_in_signal: in std_logic;
     flags_out_signal: in std_logic;
     flags_in: in std_logic_vector(2 downto 0);
@@ -30,8 +30,8 @@ entity memory_stage is
     wb:in std_logic;
     wb_out: out std_logic
 
-    Alu_data_in: in std_logic_vector(15 downto 0);
-    Alu_data_out: out std_logic_vector(15 downto 0);
+    -- Alu_data_in: in std_logic_vector(15 downto 0);
+    -- Alu_data_out: out std_logic_vector(15 downto 0);
 
     memory_to_reg:: in std_logic;
     memory_to_reg_out:out std_logic
@@ -71,7 +71,8 @@ architecture arch of memory_stage is
       signal D_vector : std_logic_vector(31 downto 0);
       signal Q_vector : std_logic_vector(31 downto 0);
     signal updated_pc_out_reg, Rs1_out_reg: std_logic_vector(15 downto 0);
-    signal address_reg :std_logic_vector(11 downto 0);
+    -- signal address_reg :std_logic_vector(11 downto 0);
+    signal alu_in_reg :std_logic_vector(11 downto 0);
     signal wb_reg: std_logic;
     signal flags_out_temp: std_logic_vector(2 downto 0);
     signal data_out_temp: std_logic_vector(15 downto 0);
@@ -139,12 +140,12 @@ port map (
         );
 
     var_reg19 : Var_Reg generic map (
-            size => 12
+            size => 16
         ) port map (
-            D => address,
+            D => alu_in_reg,
             clk => clk,
             rst => rst,
-            Q => address_reg
+            Q => alu_in_reg
         );
 
 
@@ -169,15 +170,15 @@ port map (
             rst => rst,
             Q => Rdst_out
         );
-    var_reg4 : Var_Reg generic map (
-            size => 16
-        )
-        port map (
-            D => input_port,
-            clk => clk,
-            rst => rst,
-            Q => input_port_out
-        );
+    -- var_reg4 : Var_Reg generic map (
+    --         size => 16
+    --     )
+    --     port map (
+    --         D => input_port,
+    --         clk => clk,
+    --         rst => rst,
+    --         Q => input_port_out
+    --     );
     var_reg13 : Var_Reg generic map (
             size => 16
         )
@@ -209,7 +210,7 @@ port map (
         memory_write => Q_vector(9),
         updated_pc => updated_pc_out_reg,
         Rs1 => Rs1_out_reg,
-        address => address_reg,
+        address => alu_in_reg,
         flags_in_signal => Q_vector(11),
         flags_out_signal => Q_vector(12),
         flags_in => Q_vector(15 downto 13),
