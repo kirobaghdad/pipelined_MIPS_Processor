@@ -41,8 +41,18 @@ begin
     variable CheckReturn        : std_logic;
 
     begin
-	CheckJumpCondition := '1' when (Instruction = "11011" or Branch_Taken = '1') else '0';
-	CheckReturn        := '1' when (RTI = '1' or RET = '1') else '0';
+    if (Instruction = "11011" or Branch_Taken = '1') 
+        then CheckJumpCondition := '1'; 
+    else
+        CheckJumpCondition := '0'; 
+    end if; 
+
+    if (RTI = '1' or RET = '1')
+        then CheckReturn := '1'; 
+    else 
+        CheckReturn := '0'; 
+    end if;
+
 	Signals    	   := Call & CheckReturn & InvalidAddress & EmptyStack & CheckJumpCondition & Reset & INT & HLT ;
 	
 	Case Signals is

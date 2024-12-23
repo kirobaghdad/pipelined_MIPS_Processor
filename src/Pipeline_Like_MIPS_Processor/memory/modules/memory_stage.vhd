@@ -13,6 +13,7 @@ entity memory_stage is
     flags_in_signal: in std_logic;
     flags_out_signal: in std_logic;
     flags_in: in std_logic_vector(2 downto 0);
+    
     flags_out: out std_logic_vector(2 downto 0);
     data_out: out std_logic_vector(15 downto 0);
     empty_stack: out std_logic;
@@ -29,12 +30,12 @@ entity memory_stage is
     -- input_port_out: out std_logic_vector(15 downto 0);
 
     wb:in std_logic;
-    wb_out: out std_logic
+    wb_out: out std_logic;
 
     Alu_data_in: in std_logic_vector(15 downto 0);
     Alu_data_out: out std_logic_vector(15 downto 0);
 
-    memory_to_reg:: in std_logic;
+    memory_to_reg : in std_logic;
     memory_to_reg_out:out std_logic
   );
 end entity;

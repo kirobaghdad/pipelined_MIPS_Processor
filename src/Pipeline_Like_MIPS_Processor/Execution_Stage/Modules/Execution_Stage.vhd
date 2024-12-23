@@ -27,6 +27,7 @@ entity Execution_Stage is
     mem_to_reg : in std_logic;
     stack : in std_logic;
     call : in std_logic;
+    push : in std_logic;
     pop : in std_logic;
     ldm: in std_logic;
     ret: in std_logic;
@@ -48,16 +49,19 @@ entity Execution_Stage is
     m_mem_to_reg : out std_logic;
     m_stack : out std_logic;
     m_call : out std_logic;
+    m_push : out std_logic;
     m_pop : out std_logic;
     m_ldm: out std_logic;
     m_ret: out std_logic;
     m_rti: out std_logic;
     m_store : out std_logic;
     m_int : out std_logic;
-    m_enable : out std_logic
-    -- m_IMMD_Control : out STD_LOGIC;
-    -- m_zero : out std_logic;
-    -- branch : in std_logic;
+    m_enable : out std_logic;
+
+    m_flags_in_signal : out std_logic;
+    m_flags_out_signal : out std_logic;
+
+    m_flags : out std_logic_vector(2 downto 0) -- CCR from ALU
     
   ) ;
 end Execution_Stage;
@@ -66,10 +70,15 @@ end Execution_Stage;
 architecture behavioral of Execution_Stage is
   signal OP1 : std_logic_vector(15 downto 0);
   signal temp_result : std_logic_vector(15 downto 0);
-begin
-    uut1: entity work.alu PORT MAP(alu_control => alu_control, OP1 => OP1, OP2 => R2, old_CCR => "000", result => temp_result);
 
-    uut2: entity work.Ex_MEM_Reg PORT MAP(clk => clk, rst => rst, reg_write => reg_write, Rdst => Rdst, updated_PC => updated_PC, mem_read => mem_read, mem_write => mem_write, mem_to_reg => mem_to_reg, stack => stack, call => call, pop => pop, ldm => ldm, ret => ret, rti => rti, store => store, int => int, enable => enable, result => temp_result, reg_write_r => m_reg_write, Rdst_r => m_Rdst, updated_PC_r => m_updated_PC, result_r => m_result, mem_read_r => m_mem_read, mem_writm_r => m_mem_write, mem_to_reg_r => m_mem_to_reg, stack_r => m_stack, call_r=> m_call, pop_r => m_pop, ldm_r => m_ldm, ret_r => m_ret, rti_r => m_rti, store_r => m_store, int_r => m_int, enable_r => m_enable);
+  signal flags_in_signal : std_logic;
+  signal flags_out_signal : std_logic;
+
+  signal CCR : std_logic_vector(2 downto 0);
+begin
+    uut1: entity work.alu PORT MAP(alu_control => alu_control, OP1 => OP1, OP2 => R2, old_CCR => CCR, result => temp_result, new_CCR => CCR);
+
+    uut2: entity work.Ex_MEM_Reg PORT MAP(clk => clk, rst => rst, reg_write => reg_write, Rdst => Rdst, updated_PC => updated_PC, mem_read => mem_read, mem_write => mem_write, mem_to_reg => mem_to_reg, stack => stack, call => call, push => push,pop => pop, ldm => ldm, ret => ret, rti => rti, store => store, int => int, enable => enable, result => temp_result, flags_in_signal => flags_in_signal, flags_out_signal => flags_out_signal, flags => CCR, reg_write_r => m_reg_write, Rdst_r => m_Rdst, updated_PC_r => m_updated_PC, result_r => m_result, mem_read_r => m_mem_read, mem_write_r => m_mem_write, mem_to_reg_r => m_mem_to_reg, stack_r => m_stack, call_r=> m_call, push_r => m_push, pop_r => m_pop, ldm_r => m_ldm, ret_r => m_ret, rti_r => m_rti, store_r => m_store, int_r => m_int, enable_r => m_enable, flags_in_signal_r => m_flags_in_signal, flags_out_signal_r => m_flags_out_signal, flags_r => m_flags);
 
     -- IMMD in R2
     uut3: entity work.R1_Selector PORT MAP(IMMD_Control => IMMD_Control, in_control => in_control, IMMD => IMMD, user_input => user_input, R1 => R1, OP1 => OP1);

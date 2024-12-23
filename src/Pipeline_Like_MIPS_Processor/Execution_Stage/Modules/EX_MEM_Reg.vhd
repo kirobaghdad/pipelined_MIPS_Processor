@@ -19,6 +19,7 @@ entity EX_MEM_Reg is
     mem_to_reg : in std_logic;
     stack : in std_logic;
     call : in std_logic;
+    push : in std_logic;
     pop : in std_logic;
     ldm: in std_logic;
     ret: in std_logic;
@@ -26,6 +27,11 @@ entity EX_MEM_Reg is
     store : in std_logic;
     int : in std_logic;
     enable : in std_logic;
+
+    flags_in_signal : in std_logic;
+    flags_out_signal : in std_logic;
+
+    flags : in std_logic_vector(2 downto 0);
 
     -- outputs    
     reg_write_r : out std_logic;
@@ -38,13 +44,19 @@ entity EX_MEM_Reg is
     mem_to_reg_r : out std_logic;
     stack_r : out std_logic;
     call_r : out std_logic;
+    push_r : out std_logic;
     pop_r : out std_logic;
     ldm_r: out std_logic;
     ret_r: out std_logic;
     rti_r: out std_logic;
     store_r : out std_logic;
     int_r : out std_logic;
-    enable_r : out std_logic
+    enable_r : out std_logic;
+    
+    flags_in_signal_r : out std_logic;
+    flags_out_signal_r : out std_logic;
+
+    flags_r : out std_logic_vector(2 downto 0)
   ) ;
 end EX_MEM_Reg;
 architecture behavioral of EX_MEM_Reg is
@@ -53,8 +65,8 @@ architecture behavioral of EX_MEM_Reg is
     signal mem_vec : std_logic_vector(1 downto 0);
     signal mem_r_vec : std_logic_vector(1 downto 0);
 
-    signal vec : std_logic_vector(9 downto 0);
-    signal vec_r : std_logic_vector(9 downto 0);
+    signal vec : std_logic_vector(12 downto 0);
+    signal vec_r : std_logic_vector(12 downto 0);
     -- signal vec : std_logic_vector(9 downto 0);
 begin
     reg_write_vec(0) <= reg_write;
@@ -65,8 +77,11 @@ begin
     mem_read_r <= mem_r_vec(0);
     mem_write_r <= mem_r_vec(1);
 
-    vec <= mem_to_reg & stack & call & pop & ldm & ret & rti & store & int & enable;
+    vec <= push & flags_out_signal & flags_in_signal & mem_to_reg & stack & call & pop & ldm & ret & rti & store & int & enable;
 
+    push_r <= vec_r(12);
+    flags_out_signal_r <= vec_r(11);
+    flags_in_signal_r <= vec_r(10);
     mem_to_reg_r <= vec_r(9);
     stack_r <= vec_r(8);
     call_r <= vec_r(7);
@@ -78,8 +93,18 @@ begin
     int_r <= vec_r(1);
     enable_r <= vec_r(0);
 
+
+    pip_EX_MEM6: entity work.var_reg
+    generic map (size => 13)
+    port map(
+        clk => clk,
+        rst => rst,
+        D => flags,
+        Q => flags_r
+    );
+
     pip_EX_MEM5: entity work.var_reg
-    generic map (size => 10)
+    generic map (size => 13)
     port map(
         clk => clk,
         rst => rst,

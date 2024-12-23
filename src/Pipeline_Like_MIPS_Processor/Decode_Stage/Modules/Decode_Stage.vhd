@@ -17,7 +17,7 @@ entity Decode_Stage is
     reg_write : in std_logic;
 
     -- controls
-    user_input : in std_logic;
+    user_input : in std_logic_vector(15 downto 0);
     -- user_reset : in std_logic;
 
 
@@ -36,6 +36,7 @@ entity Decode_Stage is
     e_Stack : OUT STD_LOGIC;
     e_Call : OUT STD_LOGIC;
     e_Pop : OUT STD_LOGIC;
+    e_Push : OUT std_logic;
     e_LDM : OUT STD_LOGIC;
     e_RET : OUT STD_LOGIC;
     e_RTI : OUT STD_LOGIC;
@@ -54,7 +55,7 @@ entity Decode_Stage is
     e_R2 : out STD_LOGIC_VECTOR(15 downto 0);
     e_Rdst : out STD_LOGIC_VECTOR(2 downto 0);
 
-    e_user_input : out std_logic;
+    e_user_input : out std_logic_vector(15 downto 0);
     e_updated_pc : out STD_LOGIC_VECTOR(15 downto 0)
   ) ;
 end Decode_Stage;
@@ -72,6 +73,7 @@ architecture behavioral of Decode_Stage is
     Signal d_Stack :  STD_LOGIC;
     Signal d_Call :  STD_LOGIC;
     Signal d_Pop :  STD_LOGIC;
+    Signal d_Push :  STD_LOGIC;
     Signal d_LDM :  STD_LOGIC;
     Signal d_RET :  STD_LOGIC;
     Signal d_RTI :  STD_LOGIC;
@@ -111,6 +113,7 @@ begin
         d_Stack,
         d_Call,
         d_Pop,
+        d_push,
         d_LDM,
         d_RET,
         d_RTI,
@@ -155,6 +158,7 @@ begin
         d_Stack,
         d_Call,
         d_Pop,
+        d_push,
         d_LDM,
         d_RET,
         d_RTI,
@@ -190,6 +194,7 @@ begin
         e_Stack,
         e_Call,
         e_Pop,
+        e_Push,
         e_LDM,
         e_RET,
         e_RTI,

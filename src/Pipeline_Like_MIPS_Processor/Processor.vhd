@@ -1,4 +1,6 @@
--- the processor now contains only the Execute and Decode Stages
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity Processor is
   port (
@@ -10,87 +12,175 @@ entity Processor is
       -- outputs
       output : out std_logic_vector(15 downto 0)
     ) ;
-end Processor;
+end entity;
 
 
-architecture architecture of Processor is
+architecture behavioral of Processor is
+  -- defining the intermediate signals
   
+  ---------------------------------------------------------------
+  ------------------------- Fetch Signals ----------------------
+  ---------------------------------------------------------------
+  Signal returned_Rsrc1 : std_logic_vector(15 downto 0);
+  Signal updated_pc : std_logic_vector(15 downto 0);
+
+
+  ---------------------------------------------------------------
+  ------------------------- Decode Signals ----------------------
+  ---------------------------------------------------------------
+  Signal instr : std_logic_vector(15 downto 0);
+
+  Signal returned_rdst : std_logic_vector(2 downto 0);
+  Signal returned_write_data : std_logic_vector(15 downto 0);
+  Signal reg_write : std_logic;
+
+  -- Signal d_user_input : std_logic_vector(15 downto 0);
+  Signal d_updated_pc : std_logic_vector(15 downto 0);
+  signal d_instruction_op : std_logic_vector(4 downto 0);
+  signal d_instruction : std_logic_vector(15 downto 0);
+  Signal d_Rsrc1 : std_logic_vector(2 downto 0);
+  Signal d_Rsrc2 : std_logic_vector(2 downto 0);
+  Signal d_Rdst : std_logic_vector(2 downto 0);
+
+  Signal e_Mread : std_logic;
+  Signal e_Mwrite : std_logic;
+  Signal e_RegWrite : std_logic;
+  Signal e_Alu2 : std_logic;
+  Signal e_Alu1 : std_logic;
+  Signal e_Alu0 : std_logic;
+  Signal e_alu_control : std_logic_vector(2 downto 0);
+  Signal e_Branch : std_logic;
+  Signal e_Memory_to_Reg : std_logic;
+  Signal e_inst_imm : std_logic;
+  Signal e_Stack : std_logic;
+  Signal e_Call : std_logic;
+  Signal e_Pop : std_logic;
+  Signal e_Push : std_logic;
+  Signal e_LDM : std_logic;
+  Signal e_RET : std_logic;
+  Signal e_RTI : std_logic;
+  Signal e_Store : std_logic;
+  Signal e_HLT : std_logic;
+  Signal e_Reset : std_logic;
+  Signal e_Int : std_logic;
+  Signal e_zero : std_logic;
+  Signal e_i_n : std_logic;
+  Signal e_enable : std_logic;
+  Signal e_Flags_Sel : std_logic_vector(1 downto 0);
+
+
+  -- other outputs
+  Signal e_R1 : std_logic_vector(15 downto 0);
+  Signal e_R2 : std_logic_vector(15 downto 0);
+  Signal e_Rdst : std_logic_vector(2 downto 0);
+
+  Signal e_user_input : std_logic_vector(15 downto 0);
+  Signal e_updated_pc : std_logic_vector(15 downto 0);
+
+  ---------------------------------------------------------------
+  ------------------------- Execute Signals ---------------------
+  ---------------------------------------------------------------
+
+  Signal immd : STD_LOGIC_VECTOR (15 downto 0); 
+
+  Signal m_reg_write : std_logic;
+  Signal m_Rdst : std_logic_vector(2 downto 0);
+  Signal m_updated_PC : std_logic_vector(15 downto 0);
+  Signal m_result : std_logic_vector(15 downto 0);
+  Signal m_mem_read : std_logic;
+  Signal m_mem_write : std_logic;
+
+  Signal m_mem_to_reg : std_logic;
+  Signal m_stack : std_logic;
+  Signal m_call : std_logic;
+  Signal m_pop : std_logic;
+  Signal m_push : std_logic;
+  Signal m_ldm : std_logic;
+  Signal m_ret : std_logic;
+  Signal m_rti : std_logic;
+  Signal m_store : std_logic;
+  Signal m_int : std_logic;
+  Signal m_enable : std_logic;
+  
+  Signal m_flags_in_signal : std_logic;
+  Signal m_flags_out_signal : std_logic;
+  Signal m_flags : std_logic_vector(2 downto 0);
+
+  ---------------------------------------------------------------
+  ------------------------- Memory Signals ----------------------
+  ---------------------------------------------------------------
+
+  Signal wb_flags_out : std_logic_vector(2 downto 0); 
+
+  Signal data_out : std_logic_vector(15 downto 0);
+  Signal empty_stack : std_logic; 
+
+  -- passing
+  Signal wb_pc : std_logic_vector(15 downto 0);
+  Signal wb_Rs1 : std_logic_vector(15 downto 0);
+
+  Signal wb_rdst : std_logic_vector(2 downto 0);
+
+  Signal wb_reg_write : std_logic;
+
+  Signal wb_result : std_logic_vector(15 downto 0);
+
+  Signal wb_mem_to_reg : std_logic;
+
+  Signal wb_enable : std_logic;
+
+
+  ---------------------------------------------------------------
+  --------------------- Write Back Signals ----------------------
+  ---------------------------------------------------------------
+  Signal retuned_Rsrc1 : std_logic_vector(15 downto 0); -- to be injected into fetch stage
+
+
+
 begin
-  
-  fetch_stage: work.Fetch
+  e_alu_control <= e_Alu2 & e_Alu1 & e_Alu0;
+    
+  ---------------------------------------------------------------
+  ------------------------- Fetch Stage -------------------------
+  ---------------------------------------------------------------
+
+  Fetch_Stage: entity work.fetch_top
   port map(
-    ,
-    hlt,
-    int,
-    int_pc,
-    rst,
-    branch_taken,
-    empty_stack
-    invalid_address,
-    ret,
-    rti,
-    call,
-    Rsrc1,
-    data_memory,
-
-    pc_out
-  ); 
-
-  instruction_memory: work.instruction_memory
-  port map(
-    pc_out,
-    int_location,
-
-    instruction,
-    int_pc
-  );
-
-  Fetch_Decode_block: work.Fetch_Decode_block
-  (
     clk,
-
-    PC     	         : in std_logic_vector(15 downto 0);
-    instruction      : in std_logic_vector(15 downto 0);
-  
-    flush            : in std_logic;
-    INT             ,
-          updated_PC       : out std_logic_vector(15 downto 0);
-    instruction_out  : out std_logic_vector(4 downto 0);
-    Rsrc1    	 : out std_logic_vector(2 downto 0);
-    Rsrc2    	 : out std_logic_vector(2 downto 0);
-    Rdst             : out std_logic_vector(2 downto 0);
-    immd             : out std_logic_vector(15 downto 0);
-  
-          INT_location     : out std_logic_vector(5 downto 0)
+    '0', -- todo
+    '0', -- todo
+    rst,
+    empty_stack, 
+    '0', -- todo 
+    e_RET,
+    e_RTI,
+    e_Call,
+    returned_Rsrc1, -- from write back?? 
+    returned_write_data,
+    
+    d_updated_pc,
+    d_instruction_op,
+    d_Rsrc1,
+    d_Rsrc2,
+    d_Rdst,
+    immd
   );
 
-  Fetch_RegFile: work.Fetch_RegFile
-  (
-    clk             : in  std_logic;
-    PC_in           : in  std_logic_vector(15 downto 0);  
-    instruction_in  : in std_logic_vector(4 downto 0);
-    Rsrc1_in        : in std_logic_vector(2 downto 0);
-    Rsrc2_in        : in std_logic_vector(2 downto 0);
-    Rdst_in         : in std_logic_vector(2 downto 0);
-    immd_in         : in std_logic_vector(15 downto 0);
-    PC_out          : out std_logic_vector(15 downto 0);
-    instruction_out : out std_logic_vector(4 downto 0);
-    Rsrc1_out       : out std_logic_vector(2 downto 0);
-    Rsrc2_out       : out std_logic_vector(2 downto 0);
-    Rdst_out        : out std_logic_vector(2 downto 0);
-    immd_out        : out std_logic_vector(15 downto 0)
-  );
 
-  -- fetch still not complete
+  ---------------------------------------------------------------
+  ------------------------- Decode Stage ------------------------
+  ---------------------------------------------------------------
 
-  decode_stage: work.decode_stage
+  d_instruction <= d_instruction_op & d_Rdst & d_Rsrc1 & d_Rsrc2 & "00";
+
+  decode_stage: entity work.decode_stage
   port map(
     clk,
     rst,
 
     -- inputs
-    instruction,
-    updated_pc,
+    d_instruction,
+    d_updated_pc,
 
     -- write back stage inputs
     returned_rdst,
@@ -105,7 +195,7 @@ begin
     -- Control Unit Controls
     e_Mread,
     e_Mwrite,
-    e_RegWrite
+    e_RegWrite,
     e_Alu2,
     e_Alu1,
     e_Alu0,
@@ -115,6 +205,7 @@ begin
     e_Stack,
     e_Call,
     e_Pop,
+    e_Push,
     e_LDM,
     e_RET,
     e_RTI,
@@ -138,9 +229,14 @@ begin
   );
 
 
+  
+  ---------------------------------------------------------------
+  ------------------------- Execute Stage -----------------------
+  ---------------------------------------------------------------
+
   -- ES should output the Rsrc1
-  Execution_Stage: work.Execution_Stage
-  (
+  Execution_Stage: entity work.Execution_Stage
+  port map(
      -- INPUTS 
      clk,
      rst,
@@ -149,20 +245,22 @@ begin
      e_R1,
      e_R2,
      e_updated_pc,
-     IMMD : in STD_LOGIC_VECTOR (15 downto 0);
+     immd, -- todo
+     -- should get it from the fetch 
 
      e_Rdst,
 
      e_Mread,
      e_Mwrite,
-     e_RegWrite
-     e_Alu2,
-     e_Alu1,
-     e_Alu0,
+     e_RegWrite,
+     e_alu_control,
+     e_i_n,
+     e_inst_imm,
      e_Branch,
      e_Memory_to_Reg,
      e_Stack,
      e_Call,
+     e_Push, 
      e_Pop,
      e_LDM,
      e_RET,
@@ -184,23 +282,27 @@ begin
      m_mem_to_reg,
      m_stack,
      m_call,
+     m_push,
      m_pop,
      m_ldm,
      m_ret,
      m_rti,
      m_store,
      m_int,
-     m_enable
+     m_enable,
 
-     -- e_IMMD_Control : out STD_LOGIC;
-     -- e_zero : out std_logic;
-     -- branch : in std_logic;
+     m_flags_in_signal,
+     m_flags_out_signal,
+     m_flags
   );
 
+  ---------------------------------------------------------------
+  ------------------------- Memory Stage ------------------------
+  ---------------------------------------------------------------
 
-  Memory_Stage: work.memory_stage
+  Memory_Stage: entity work.memory_stage
   port map(
-    m_push, -- todo
+    m_push, 
     m_pop,
     m_ldm,
     m_store,
@@ -214,15 +316,21 @@ begin
     m_mem_read,
     m_mem_write,
     m_updated_pc,
-    m_Rsrc1, -- 
-    m_result, -- todo
-    m_flags_signal_in, -- todo
-    m_flags_signal_out, -- todo
-    m_flags_in, -- todo
-    m_flags_out, -- todo
+    "0000000000000000",  -- todo
+    
+    m_flags_in_signal,
+    m_flags_out_signal, 
 
-    data_out, -- todo
+    m_flags,
+
+    -- outputs 
+    wb_flags_out, 
+
+    data_out, 
     empty_stack,
+
+    m_enable,
+    wb_enable,
 
     -- passing
     wb_pc,
@@ -241,25 +349,27 @@ begin
     wb_mem_to_reg
   );
 
-  Write_Back_Stage: work.Write_Back_Stage
+  ---------------------------------------------------------------
+  --------------------------- WB Stage --------------------------
+  ---------------------------------------------------------------
+
+  Write_Back_Stage: entity work.Write_Back_Stage
   port map(
     rst,
 
-    wb_updated_sp,
-    wb_updated_pc,
+    -- wb_updated_sp,
+    wb_pc,
     wb_Rs1,
     wb_result,
-    data_out,
+    data_out, 
     wb_rdst,
-    wb_stack, -- todo
 
     wb_mem_to_reg,
     wb_reg_write,
+    wb_enable, 
 
-
-    updated_sp,
-    updated_pc,
-    retuned_Rsrc1,
+    updated_pc, -- pass to the fetch
+    returned_Rsrc1,
     returned_Rdst,
     reg_write,
 
@@ -267,21 +377,5 @@ begin
     returned_write_data
   );
   
-end architecture architecture;
+end architecture behavioral;
 
-
-
-
-
-  -- instr : in std_logic_vector(15 downto 0);
-  -- -- inputs
-  -- instr : in std_logic_vector(15 downto 0);
-  -- updated_pc : in std_logic_vector(15 downto 0);
-
-  -- -- write back stage inputs
-  -- returned_rdst : in std_logic_vector(2 downto 0);
-  -- returned_write_data : in std_logic_vector(15 downto 0);
-  -- reg_write : in std_logic;
-
-  -- -- controls
-  -- user_input : in std_logic;

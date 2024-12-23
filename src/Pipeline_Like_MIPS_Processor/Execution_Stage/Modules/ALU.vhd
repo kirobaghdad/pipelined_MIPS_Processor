@@ -71,7 +71,7 @@ architecture Behavioral of ALU is
                 new_CCR(0) <= '1';
             else 
                 new_CCR(0) <= '0';
-            end if;x
+            end if;
 
             new_CCR(1) <= temp_result(15);
             new_CCR(2) <= temp_result(16);
