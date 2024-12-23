@@ -22,6 +22,7 @@ ARCHITECTURE Behavioral OF Control_Unit_tb IS
             Stack : OUT STD_LOGIC;
             Call : OUT STD_LOGIC;
             Pop : OUT STD_LOGIC;
+            Push : OUT STD_LOGIC;
             LDM : OUT STD_LOGIC;
             RET : OUT STD_LOGIC;
             RTI : OUT STD_LOGIC;
@@ -39,7 +40,7 @@ ARCHITECTURE Behavioral OF Control_Unit_tb IS
     -- Signals for simulation
     SIGNAL opcode : STD_LOGIC_VECTOR(4 DOWNTO 0);
     SIGNAL Mread, Mwrite, RegWrite, Alu2, Alu1, Alu0 : STD_LOGIC;
-    SIGNAL Branch, Memory_to_Reg, inst_imm, Stack, Call, Pop : STD_LOGIC;
+    SIGNAL Branch, Memory_to_Reg, inst_imm, Stack, Call, Pop, Push : STD_LOGIC;
     SIGNAL LDM, RET, RTI, Store, HLT, Reset, Int, zero, i_n, enable : STD_LOGIC;
     SIGNAL Flags_Sel : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
@@ -59,6 +60,7 @@ BEGIN
         Stack => Stack,
         Call => Call,
         Pop => Pop,
+        Push => Push,
         LDM => LDM,
         RET => RET,
         RTI => RTI,
@@ -75,44 +77,108 @@ BEGIN
     -- Test process
     PROCESS
     BEGIN
-        -- Test Case 1: NOP operation
-        opcode <= "00000";
-        WAIT FOR 10 ns;
-
-        -- Test Case 2: HLT operation
-        opcode <= "00001";
-        WAIT FOR 10 ns;
-
-        -- Test Case 3: SETC operation
-        opcode <= "00010";
-        WAIT FOR 10 ns;
-
-        -- Test Case 4: NOT operation
-        opcode <= "00011";
-        WAIT FOR 10 ns;
-
-        -- Test Case 5: INC operation
-        opcode <= "00100";
-        WAIT FOR 10 ns;
-
-        -- Test Case 6: PUSH operation
-        opcode <= "10000";
-        WAIT FOR 10 ns;
-
-        -- Test Case 7: POP operation
-        opcode <= "10001";
-        WAIT FOR 10 ns;
-
-        -- Test Case 8: LDM operation
-        opcode <= "10010";
-        WAIT FOR 10 ns;
-
-        -- Test Case 9: CALL operation
+        -- JZ operation
         opcode <= "11000";
         WAIT FOR 10 ns;
 
-        -- Test Case 10: RET operation
+        -- JN operation
         opcode <= "11001";
+        WAIT FOR 10 ns;
+
+        -- JC operation
+        opcode <= "11010";
+        WAIT FOR 10 ns;
+
+        -- JMP operation
+        opcode <= "11011";
+        WAIT FOR 10 ns;
+
+        -- CALL operation
+        opcode <= "11100";
+        WAIT FOR 10 ns;
+
+        -- RET operation
+        opcode <= "11101";
+        WAIT FOR 10 ns;
+
+        -- INT operation
+        opcode <= "11110";
+        WAIT FOR 10 ns;
+
+        -- RTI operation
+        opcode <= "11111";
+        WAIT FOR 10 ns;
+
+        -- PUSH operation
+        opcode <= "10000";
+        WAIT FOR 10 ns;
+
+        -- POP operation
+        opcode <= "10001";
+        WAIT FOR 10 ns;
+
+        -- LDM operation
+        opcode <= "10010";
+        WAIT FOR 10 ns;
+
+        -- LDD operation
+        opcode <= "10011";
+        WAIT FOR 10 ns;
+
+        -- STD operation
+        opcode <= "10100";
+        WAIT FOR 10 ns;
+
+        -- MOV operation
+        opcode <= "01000";
+        WAIT FOR 10 ns;
+
+        -- ADD operation
+        opcode <= "01001";
+        WAIT FOR 10 ns;
+
+        -- SUB operation
+        opcode <= "01010";
+        WAIT FOR 10 ns;
+
+        -- AND operation
+        opcode <= "01011";
+        WAIT FOR 10 ns;
+
+        -- IADD operation
+        opcode <= "01100";
+        WAIT FOR 10 ns;
+
+        -- NOP operation
+        opcode <= "00000";
+        WAIT FOR 10 ns;
+
+        -- HLT operation
+        opcode <= "00001";
+        WAIT FOR 10 ns;
+
+        -- SETC operation
+        opcode <= "00010";
+        WAIT FOR 10 ns;
+
+        -- NOT operation
+        opcode <= "00011";
+        WAIT FOR 10 ns;
+
+        -- INC operation
+        opcode <= "00100";
+        WAIT FOR 10 ns;
+
+        -- OUT operation
+        opcode <= "00101";
+        WAIT FOR 10 ns;
+
+        -- IN operation
+        opcode <= "00110";
+        WAIT FOR 10 ns;
+
+        -- Reset operation
+        opcode <= "00111";
         WAIT FOR 10 ns;
 
         -- End simulation
