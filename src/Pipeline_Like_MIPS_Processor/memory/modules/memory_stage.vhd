@@ -24,14 +24,14 @@ entity memory_stage is
     Rdst: in std_logic_vector(2 downto 0);
     Rdst_out: out std_logic_vector(2 downto 0);
 
-    input_port: in std_logic_vector(15 downto 0);
-    input_port_out: out std_logic_vector(15 downto 0);
+    -- input_port: in std_logic_vector(15 downto 0);
+    -- input_port_out: out std_logic_vector(15 downto 0);
 
     wb:in std_logic;
     wb_out: out std_logic
 
-    -- Alu_data_in: in std_logic_vector(15 downto 0);
-    -- Alu_data_out: out std_logic_vector(15 downto 0);
+    Alu_data_in: in std_logic_vector(15 downto 0);
+    Alu_data_out: out std_logic_vector(15 downto 0);
 
     memory_to_reg:: in std_logic;
     memory_to_reg_out:out std_logic
@@ -142,7 +142,7 @@ port map (
     var_reg19 : Var_Reg generic map (
             size => 16
         ) port map (
-            D => alu_in_reg,
+            D => Alu_data_in,
             clk => clk,
             rst => rst,
             Q => alu_in_reg
