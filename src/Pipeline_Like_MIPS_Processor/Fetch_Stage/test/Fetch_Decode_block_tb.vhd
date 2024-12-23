@@ -15,6 +15,7 @@ architecture tb of Fetch_Decode_block_tb is
             instruction      : in std_logic_vector(15 downto 0);
             flush            : in std_logic;
             INT              : out std_logic;
+  	    HLT              : out std_logic;
             updated_PC       : out std_logic_vector(15 downto 0);
             instruction_out  : out std_logic_vector(4 downto 0);
             Rsrc1            : out std_logic_vector(2 downto 0);
@@ -30,6 +31,7 @@ architecture tb of Fetch_Decode_block_tb is
     signal instruction      : std_logic_vector(15 downto 0);
     signal flush            : std_logic;
     signal INT              : std_logic;
+    signal HLT              : std_logic;
     signal updated_PC       : std_logic_vector(15 downto 0);
     signal instruction_out  : std_logic_vector(4 downto 0);
     signal Rsrc1            : std_logic_vector(2 downto 0);
@@ -59,19 +61,19 @@ begin
     clk_process: process
     begin
         clk <= '0'; -- initialize clock
-        wait for 10 ns;
+        wait for 10 ps;
         clk <= '1';
-        wait for 10 ns;
+        wait for 10 ps;
     end process clk_process;
 
     -- Stimulus process
     stim_proc: process
     begin
         -- Test case 1
-        PC <= "0000000001010100";
+        PC <= "0000000000000000";
         instruction <= "0000000001010101"; -- Some normal instruction
         flush <= '0';
-        wait for 20 ns;
+        wait for 20 ps;
 	assert (updated_PC = "0000000000000001")
         	report "Test one Failed."
         	severity note;
@@ -79,19 +81,19 @@ begin
         PC <= "0000000000000010";
         instruction <= "1111000000000000";
         flush <= '0';
-        wait for 20 ns;
+        wait for 20 ps;
 
         -- Test case 3
         PC <= "0000000000000100";
         instruction <= "0000000000000000"; -- Normal instruction
         flush <= '1';
-        wait for 20 ns;
+        wait for 20 ps;
 
         -- Test case 4
         PC <= "0000000000000110";
         instruction <= "1111000000000000"; -- Interrupt instruction
         flush <= '1';
-        wait for 20 ns;
+        wait for 20 ps;
 
         wait;
     end process stim_proc;
