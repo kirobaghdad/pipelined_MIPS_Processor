@@ -16,7 +16,8 @@ entity memory_stage is
     flags_out: out std_logic_vector(2 downto 0);
     data_out: out std_logic_vector(15 downto 0);
     empty_stack: out std_logic;
-
+    out_enable: in std_logic;
+    out_enable_out: out std_logic;
     -- passing
     updated_pc_out: out std_logic_vector(15 downto 0);
     Rs1_out: out std_logic_vector(15 downto 0);
@@ -98,6 +99,7 @@ begin
     D_vector(15 downto 13) <= flags_in;
     D_vector(16) <= wb;
     D_vector(17)<=memory_to_reg;
+    D_vector(18)<=out_enable;
 
     memory_to_reg_out<=Q_vector(17);
     -- Single instance of Var_Reg
@@ -195,6 +197,7 @@ port map (
     data_out<=data_out_temp;
     empty_stack<=empty_stack_temp;
     wb_out<=wb_out_temp;
+    out_enable_out<=Q_vector(18);
     memory_stage1:memory_stage_without_buffer port map (
         push => Q_vector(0),
         pop => Q_vector(1),
