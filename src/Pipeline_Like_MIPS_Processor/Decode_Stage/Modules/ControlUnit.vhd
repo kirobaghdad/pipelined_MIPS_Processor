@@ -18,6 +18,7 @@ ENTITY Control_Unit IS
         Stack : OUT STD_LOGIC;
         Call : OUT STD_LOGIC;
         Pop : OUT STD_LOGIC;
+        Push : OUT STD_LOGIC;
         LDM : OUT STD_LOGIC;
         RET : OUT STD_LOGIC;
         RTI : OUT STD_LOGIC;
@@ -48,6 +49,7 @@ BEGIN
                 Stack <= '0';
                 Call <= '0';
                 Pop <= '0';
+                Push <= '0';
                 LDM <= '0';
                 RET <= '0';
                 RTI <= '0';
@@ -221,6 +223,7 @@ BEGIN
                 enable <= '0';
                 Reset <= '0';
                 Flags_Sel <= "00";
+                --- Memory
                 CASE opcode(3) IS
                     WHEN '0' =>
                         Branch <= '0';
@@ -241,6 +244,7 @@ BEGIN
                                 inst_imm <= '0';
                                 Stack <= '1';
                                 Pop <= '0';
+                                Push <= '1';
                                 LDM <= '0';
                                 Store <= '0';
                                 zero <= '1';
@@ -255,6 +259,7 @@ BEGIN
                                 inst_imm <= '0';
                                 Stack <= '1';
                                 Pop <= '1';
+                                Push <= '0';
                                 LDM <= '0';
                                 Store <= '0';
                                 zero <= '0';
@@ -269,6 +274,7 @@ BEGIN
                                 inst_imm <= '0';
                                 Stack <= '0';
                                 Pop <= '0';
+                                Push <= '0';
                                 LDM <= '1';
                                 Store <= '0';
                                 zero <= '0';
@@ -283,6 +289,7 @@ BEGIN
                                 inst_imm <= '1';
                                 Stack <= '0';
                                 Pop <= '0';
+                                Push <= '0';
                                 LDM <= '0';
                                 Store <= '0';
                                 zero <= '0';
@@ -297,6 +304,7 @@ BEGIN
                                 inst_imm <= '0';
                                 Stack <= '0';
                                 Pop <= '0';
+                                Push <= '0';
                                 LDM <= '0';
                                 Store <= '1';
                                 zero <= '0';
@@ -310,56 +318,60 @@ BEGIN
                         LDM <= '0';
                         RegWrite <= '0';
                         Store <= '0';
-                        -- two operands
+                        -- Branching
                         CASE opcode(2 DOWNTO 0) IS
-                            WHEN "000" =>
-                                -- JZ operation
-                                Mread <= '0';
-                                Mwrite <= '0';
-                                Branch <= '1';
-                                Stack <= '0';
-                                Call <= '0';
-                                Pop <= '0';
-                                RET <= '0';
-                                RTI <= '0';
-                                Int <= '0';
-                                zero <= '0';
-                            WHEN "001" =>
-                                -- JN operation
-                                Mread <= '0';
-                                Mwrite <= '0';
-                                Branch <= '1';
-                                Stack <= '0';
-                                Call <= '0';
-                                Pop <= '0';
-                                RET <= '0';
-                                RTI <= '0';
-                                Int <= '0';
-                                zero <= '0';
-                            WHEN "010" =>
-                                -- JC operation
-                                Mread <= '0';
-                                Mwrite <= '0';
-                                Branch <= '1';
-                                Stack <= '0';
-                                Call <= '0';
-                                Pop <= '0';
-                                RET <= '0';
-                                RTI <= '0';
-                                Int <= '0';
-                                zero <= '0';
-                            WHEN "011" =>
-                                -- JMP operation
-                                Mread <= '0';
-                                Mwrite <= '0';
-                                Branch <= '1';
-                                Stack <= '0';
-                                Call <= '0';
-                                Pop <= '0';
-                                RET <= '0';
-                                RTI <= '0';
-                                Int <= '0';
-                                zero <= '0';
+                                -- WHEN "000" =>
+                                --     -- JZ operation
+                                --     Mread <= '0';
+                                --     Mwrite <= '0';
+                                --     Branch <= '1';
+                                --     Stack <= '0';
+                                --     Call <= '0';
+                                --     Pop <= '0';
+                                --     Push <= '0';
+                                --     RET <= '0';
+                                --     RTI <= '0';
+                                --     Int <= '0';
+                                --     zero <= '0';
+                                -- WHEN "001" =>
+                                --     -- JN operation
+                                --     Mread <= '0';
+                                --     Mwrite <= '0';
+                                --     Branch <= '1';
+                                --     Stack <= '0';
+                                --     Call <= '0';
+                                --     Pop <= '0';
+                                --     Push <= '0';
+                                --     RET <= '0';
+                                --     RTI <= '0';
+                                --     Int <= '0';
+                                --     zero <= '0';
+                                -- WHEN "010" =>
+                                --     -- JC operation
+                                --     Mread <= '0';
+                                --     Mwrite <= '0';
+                                --     Branch <= '1';
+                                --     Stack <= '0';
+                                --     Call <= '0';
+                                --     Pop <= '0';
+                                --     Push <= '0';
+                                --     RET <= '0';
+                                --     RTI <= '0';
+                                --     Int <= '0';
+                                --     zero <= '0';
+                                -- WHEN "011" =>
+                                --     -- JMP operation
+                                --     Mread <= '0';
+                                --     Mwrite <= '0';
+                                --     Branch <= '1';
+                                --     Stack <= '0';
+                                --     Call <= '0';
+                                --     Pop <= '0';
+                                --     Push <= '0';
+                                --     RET <= '0';
+                                --     RTI <= '0';
+                                --     Int <= '0';
+                                --     zero <= '0';
                             WHEN "100" =>
                                 -- CALL operation
                                 Mread <= '0';
@@ -368,6 +380,8 @@ BEGIN
                                 Stack <= '1';
                                 Call <= '1';
                                 Pop <= '0';
+                                Push <= '1';
+                                Push <= '1';
                                 RET <= '0';
                                 RTI <= '0';
                                 Int <= '0';
@@ -380,6 +394,7 @@ BEGIN
                                 Stack <= '1';
                                 Call <= '0';
                                 Pop <= '1';
+                                Push <= '0';
                                 RET <= '1';
                                 RTI <= '0';
                                 Int <= '0';
@@ -392,6 +407,7 @@ BEGIN
                                 Stack <= '1';
                                 Call <= '0';
                                 Pop <= '0';
+                                Push <= '1';
                                 RET <= '0';
                                 RTI <= '0';
                                 Int <= '1';
@@ -404,11 +420,23 @@ BEGIN
                                 Stack <= '1';
                                 Call <= '0';
                                 Pop <= '1';
+                                Push <= '0';
                                 RET <= '1';
                                 RTI <= '1';
                                 Int <= '0';
                                 zero <= '0';
                             WHEN OTHERS =>
+                                Mread <= '0';
+                                Mwrite <= '0';
+                                Branch <= '1';
+                                Stack <= '0';
+                                Call <= '0';
+                                Pop <= '0';
+                                Push <= '0';
+                                RET <= '0';
+                                RTI <= '0';
+                                Int <= '0';
+                                zero <= '0';
                         END CASE;
 
                     WHEN OTHERS =>
