@@ -38,25 +38,25 @@ entity Execution_Stage is
 
 
     -- Outputs 
-    e_reg_write : out std_logic;
-    e_Rdst : out std_logic_vector(2 downto 0);
-    e_updated_PC : out std_logic_vector(15 downto 0);
-    e_result : out std_logic_vector(15 downto 0);
-    e_mem_read : out std_logic;
-    e_mem_write : out std_logic;
+    m_reg_write : out std_logic;
+    m_Rdst : out std_logic_vector(2 downto 0);
+    m_updated_PC : out std_logic_vector(15 downto 0);
+    m_result : out std_logic_vector(15 downto 0);
+    m_mem_read : out std_logic;
+    m_mem_write : out std_logic;
 
-    e_mem_to_reg : out std_logic;
-    e_stack : out std_logic;
-    e_call : out std_logic;
-    e_pop : out std_logic;
-    e_ldm: out std_logic;
-    e_ret: out std_logic;
-    e_rti: out std_logic;
-    e_store : out std_logic;
-    e_int : out std_logic;
-    e_enable : out std_logic
-    -- e_IMMD_Control : out STD_LOGIC;
-    -- e_zero : out std_logic;
+    m_mem_to_reg : out std_logic;
+    m_stack : out std_logic;
+    m_call : out std_logic;
+    m_pop : out std_logic;
+    m_ldm: out std_logic;
+    m_ret: out std_logic;
+    m_rti: out std_logic;
+    m_store : out std_logic;
+    m_int : out std_logic;
+    m_enable : out std_logic
+    -- m_IMMD_Control : out STD_LOGIC;
+    -- m_zero : out std_logic;
     -- branch : in std_logic;
     
   ) ;
@@ -69,7 +69,7 @@ architecture behavioral of Execution_Stage is
 begin
     uut1: entity work.alu PORT MAP(alu_control => alu_control, OP1 => OP1, OP2 => R2, old_CCR => "000", result => temp_result);
 
-    uut2: entity work.Ex_MEM_Reg PORT MAP(clk => clk, rst => rst, reg_write => reg_write, Rdst => Rdst, updated_PC => updated_PC, mem_read => mem_read, mem_write => mem_write, mem_to_reg => mem_to_reg, stack => stack, call => call, pop => pop, ldm => ldm, ret => ret, rti => rti, store => store, int => int, enable => enable, result => temp_result, reg_write_r => e_reg_write, Rdst_r => e_Rdst, updated_PC_r => e_updated_PC, result_r => e_result, mem_read_r => e_mem_read, mem_write_r => e_mem_write, mem_to_reg_r => e_mem_to_reg, stack_r => e_stack, call_r=> e_call, pop_r => e_pop, ldm_r => e_ldm, ret_r => e_ret, rti_r => e_rti, store_r => e_store, int_r => e_int, enable_r => e_enable);
+    uut2: entity work.Ex_MEM_Reg PORT MAP(clk => clk, rst => rst, reg_write => reg_write, Rdst => Rdst, updated_PC => updated_PC, mem_read => mem_read, mem_write => mem_write, mem_to_reg => mem_to_reg, stack => stack, call => call, pop => pop, ldm => ldm, ret => ret, rti => rti, store => store, int => int, enable => enable, result => temp_result, reg_write_r => m_reg_write, Rdst_r => m_Rdst, updated_PC_r => m_updated_PC, result_r => m_result, mem_read_r => m_mem_read, mem_writm_r => m_mem_write, mem_to_reg_r => m_mem_to_reg, stack_r => m_stack, call_r=> m_call, pop_r => m_pop, ldm_r => m_ldm, ret_r => m_ret, rti_r => m_rti, store_r => m_store, int_r => m_int, enable_r => m_enable);
 
     -- IMMD in R2
     uut3: entity work.R1_Selector PORT MAP(IMMD_Control => IMMD_Control, in_control => in_control, IMMD => IMMD, user_input => user_input, R1 => R1, OP1 => OP1);
