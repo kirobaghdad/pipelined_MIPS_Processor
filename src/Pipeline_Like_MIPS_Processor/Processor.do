@@ -18,10 +18,15 @@ add wave -position end  sim:/processor/e_RegWrite
 add wave -position end  sim:/processor/m_reg_write
 add wave -position end  sim:/processor/wb_reg_write
 add wave -position end  sim:/processor/m_result
+add wave -position end  sim:/processor/reg_write
+add wave -position end  sim:/processor/returned_rdst
+add wave -position end  sim:/processor/wb_rdst
+
+
 
 
 force -freeze sim:/processor/clk 1 0, 0 {5 ps} -r 10
 force -freeze sim:/processor/rst 1 0
-force -freeze sim:/processor/rst 0 5
+force -freeze sim:/processor/rst 0 15
 
--- run 
+run 90ps 

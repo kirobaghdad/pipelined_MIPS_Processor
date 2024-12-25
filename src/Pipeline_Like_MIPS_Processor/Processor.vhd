@@ -356,6 +356,7 @@ begin
   Write_Back_Stage: entity work.Write_Back_Stage
   port map(
     rst,
+    clk,
 
     -- wb_updated_sp,
     wb_pc,

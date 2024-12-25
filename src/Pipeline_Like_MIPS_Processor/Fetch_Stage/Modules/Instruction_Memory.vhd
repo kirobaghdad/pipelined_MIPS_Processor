@@ -15,8 +15,8 @@ architecture arch of instruction_memory is
     type instructions_memo is array (0 to 65535) of std_logic_vector(15 downto 0);
     signal instructions : instructions_memo := (
 	    0  => "0000000000000000",
-        1  => "0100101100101000",
-        2  => "0001001000000011",
+        1  => "0100101100101000", -- Add R3,R1,R2
+        2  => "0100100101001100", -- Add R1,R2,R3
         3  => "0001001100000100",
 
         4  => "0010000000010001",

@@ -1,4 +1,3 @@
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -49,7 +48,7 @@ architecture arch of memory_stage is
             memory_read, memory_write: in std_logic;
             updated_pc: in std_logic_vector(15 downto 0);
             Rs1: in std_logic_vector(15 downto 0);
-            address: in std_logic_vector(15 downto 0);
+            address: in std_logic_vector(11 downto 0);
             flags_in_signal: in std_logic;
             flags_out_signal: in std_logic;
             flags_in: in std_logic_vector(2 downto 0);
@@ -80,9 +79,11 @@ architecture arch of memory_stage is
     signal data_out_temp: std_logic_vector(15 downto 0);
     signal empty_stack_temp: std_logic;
     signal wb_out_temp: std_logic;
+    signal address_temp: std_logic_vector(11 downto 0);
+
     -- signal wb_vector : std_logic_vector(0 downto 0);
     -- signal temp_wb: std_logic_vector(0 downto 0);
-
+    
 begin
     D_vector(0) <= push;
     D_vector(1) <= pop;
@@ -101,13 +102,15 @@ begin
     D_vector(16) <= wb;
     D_vector(17)<=memory_to_reg;
     D_vector(18)<=out_enable;
-
+    
+    address_temp<=alu_in_reg(11 downto 0);
+    
     memory_to_reg_out<=Q_vector(17);
     -- Single instance of Var_Reg
-var_reg20 : Var_Reg
-generic map (
+    var_reg20 : Var_Reg
+    generic map (
     size => 32  -- Adjust size as needed
-)
+    )
 port map (
     D => D_vector,
     clk => clk,
@@ -214,7 +217,7 @@ port map (
         memory_write => Q_vector(9),
         updated_pc => updated_pc_out_reg,
         Rs1 => Rs1_out_reg,
-        address => alu_in_reg,
+        address => address_temp,
         flags_in_signal => Q_vector(11),
         flags_out_signal => Q_vector(12),
         flags_in => Q_vector(15 downto 13),

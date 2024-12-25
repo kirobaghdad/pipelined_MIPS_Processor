@@ -6,6 +6,7 @@ USE IEEE.numeric_std.ALL;
 entity Write_Back_Stage is
   port (
     reset : in std_logic;  
+    clk : in std_logic;
 
     -- inputs
     updated_pc_r : in std_logic_vector(15 downto 0);
@@ -36,7 +37,7 @@ architecture behavioral of Write_Back_Stage is
     -- signal user_output : std_logic_vector(15 downto 0);
 begin
     
-    process(reset)
+    process(reset, clk)
     begin
         if reset = '1'then
             returned_write_data <= (others => '0');
@@ -47,30 +48,32 @@ begin
             RSrc1 <= (others => '0');
             returned_rdst <= (others => '0');
             reg_write <= '0';
-        else
-            -- write back
-            if mem_to_reg = '1' then
-                returned_write_data <= dm_output;
-            else 
-                returned_write_data <= alu_result;
+        else 
+            if rising_edge(clk) THEN
+                -- write back
+                if mem_to_reg = '1' then
+                    returned_write_data <= dm_output;
+                else 
+                    returned_write_data <= alu_result;
+                end if;
+
+                if out_enable = '1' then
+                    Output <= Rsrc1_r; 
+                else 
+                    Output <= (others => '0');
+                end if;
+
+                updated_pc <= updated_pc_r;
+                Rsrc1 <= Rsrc1_r;
+
+                -- if stack = '1' then
+                --     SP <= updated_sp_r; 
+                -- end if;
+
+                returned_rdst <= returned_rdst_r;
+
+                reg_write <= reg_write_r;
             end if;
-
-            if out_enable = '1' then
-                Output <= Rsrc1_r; 
-            else 
-                Output <= (others => '0');
-            end if;
-
-            updated_pc <= updated_pc_r;
-            Rsrc1 <= Rsrc1_r;
-
-            -- if stack = '1' then
-            --     SP <= updated_sp_r; 
-            -- end if;
-
-            returned_rdst <= returned_rdst_r;
-
-            reg_write <= reg_write_r;
 
         end if;        
 

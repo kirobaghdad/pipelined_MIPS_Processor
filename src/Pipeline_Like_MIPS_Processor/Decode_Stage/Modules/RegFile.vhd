@@ -20,7 +20,7 @@ END RegFile;
 ARCHITECTURE RegFile_Arch OF RegFile IS
 
     TYPE reg_array IS ARRAY (0 TO 7) OF STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL registers : reg_array := (OTHERS => (OTHERS => '0'));
+    SIGNAL registers : reg_array;
 
 BEGIN
     PROCESS (Clk)
