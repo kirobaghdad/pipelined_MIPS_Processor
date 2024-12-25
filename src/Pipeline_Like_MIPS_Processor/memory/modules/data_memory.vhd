@@ -8,7 +8,7 @@ entity memory_stage_without_buffer is
         memory_read, memory_write: in std_logic;
         updated_pc: in std_logic_vector(15 downto 0);
         Rs1: in std_logic_vector(15 downto 0);
-        address: in std_logic_vector(11 downto 0);
+        address: in std_logic_vector(15 downto 0);
         flags_in_signal: in std_logic;
         flags_out_signal: in std_logic;
         flags_in: in std_logic_vector(2 downto 0);
@@ -25,7 +25,7 @@ architecture arch of memory_stage_without_buffer is
 begin 
     process(clk, rst)
         variable final_data: std_logic_vector(15 downto 0);
-        variable final_address: unsigned(11 downto 0);
+        variable final_address: unsigned(15 downto 0);
     begin 
         wb_out <= wb;
         empty_stack <= '0';
@@ -35,7 +35,7 @@ begin
             data_out <= (others => '0');
             data_memory <= (others => (others => '0'));
             sp <= to_unsigned(2**12 - 1, 16);
-        elsif (falling_edge(clk)) then
+        elsif (rising_edge(clk)) then
             if (memory_write = '1') then
                 if (store = '1') then
                     final_address := unsigned(address);

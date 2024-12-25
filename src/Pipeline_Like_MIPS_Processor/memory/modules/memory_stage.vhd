@@ -49,7 +49,7 @@ architecture arch of memory_stage is
             memory_read, memory_write: in std_logic;
             updated_pc: in std_logic_vector(15 downto 0);
             Rs1: in std_logic_vector(15 downto 0);
-            address: in std_logic_vector(11 downto 0);
+            address: in std_logic_vector(15 downto 0);
             flags_in_signal: in std_logic;
             flags_out_signal: in std_logic;
             flags_in: in std_logic_vector(2 downto 0);
@@ -74,7 +74,7 @@ architecture arch of memory_stage is
       signal Q_vector : std_logic_vector(31 downto 0);
     signal updated_pc_out_reg, Rs1_out_reg: std_logic_vector(15 downto 0);
     -- signal address_reg :std_logic_vector(11 downto 0);
-    signal alu_in_reg :std_logic_vector(11 downto 0);
+    signal alu_in_reg :std_logic_vector(15 downto 0);
     signal wb_reg: std_logic;
     signal flags_out_temp: std_logic_vector(2 downto 0);
     signal data_out_temp: std_logic_vector(15 downto 0);
@@ -106,7 +106,7 @@ begin
     -- Single instance of Var_Reg
 var_reg20 : Var_Reg
 generic map (
-    size => 16  -- Adjust size as needed
+    size => 32  -- Adjust size as needed
 )
 port map (
     D => D_vector,

@@ -95,7 +95,7 @@ begin
 
 
     pip_EX_MEM6: entity work.var_reg
-    generic map (size => 13)
+    generic map (size => 3)
     port map(
         clk => clk,
         rst => rst,

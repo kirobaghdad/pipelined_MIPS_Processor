@@ -27,7 +27,11 @@ BEGIN
     BEGIN
         IF rising_edge(Clk) THEN -- Is the Reset Sync or Async ?? 
             IF Reset = '1' THEN
-                registers <= (OTHERS => (OTHERS => '0'));
+                registers <= (
+                "0000000000001111",    
+                "0000000000001111",   
+                OTHERS => (OTHERS => '0'));
+
             ELSIF RegWrite = '1' THEN
                 registers(to_integer(unsigned(WAddr))) <= WData;
             END IF;
