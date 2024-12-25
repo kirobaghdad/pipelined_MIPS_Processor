@@ -21,6 +21,7 @@ add wave -position end  sim:/processor/m_result
 add wave -position end  sim:/processor/reg_write
 add wave -position end  sim:/processor/returned_rdst
 add wave -position end  sim:/processor/wb_rdst
+add wave -position end  sim:/processor/m_Rdst
 
 
 
@@ -29,4 +30,4 @@ force -freeze sim:/processor/clk 1 0, 0 {5 ps} -r 10
 force -freeze sim:/processor/rst 1 0
 force -freeze sim:/processor/rst 0 15
 
-run 90ps 
+-- run 40ps 

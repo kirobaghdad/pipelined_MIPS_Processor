@@ -138,7 +138,7 @@ architecture behavioral of Processor is
 
 
 begin
-  e_alu_control <= e_Alu2 & e_Alu1 & e_Alu0;
+  e_alu_control <= e_Alu0 & e_Alu1 & e_Alu2;
     
   ---------------------------------------------------------------
   ------------------------- Fetch Stage -------------------------
